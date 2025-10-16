@@ -7,12 +7,28 @@ public class Main {
     public static void main(String[] args) {
         String breed = "hound";
         BreedFetcher breedFetcher = new CachingBreedFetcher(new BreedFetcherForLocalTesting());
-        int result = getNumberOfSubBreeds(breed, breedFetcher);
-        System.out.println(breed + " has " + result + " sub breeds");
+        try {
+            int result = getNumberOfSubBreeds(breed, breedFetcher);
+            System.out.println(breed + " has " + result + " sub breeds");
+        } catch (BreedFetcher.BreedNotFoundException e) {
+            System.out.println(breed + " has 0 sub breeds");
+        }
 
         breed = "cat";
-        result = getNumberOfSubBreeds(breed, breedFetcher);
-        System.out.println(breed + " has " + result + " sub breeds");
+        try {
+            int result = getNumberOfSubBreeds(breed, breedFetcher);
+            System.out.println(breed + " has " + result + " sub breeds");
+        } catch (BreedFetcher.BreedNotFoundException e) {
+            System.out.println(breed + " has 0 sub breeds");
+        }
+//        String breed = "hound";
+//        BreedFetcher breedFetcher = new CachingBreedFetcher(new BreedFetcherForLocalTesting());
+//        int result = getNumberOfSubBreeds(breed, breedFetcher);
+//        System.out.println(breed + " has " + result + " sub breeds");
+//
+//        breed = "cat";
+//        result = getNumberOfSubBreeds(breed, breedFetcher);
+//        System.out.println(breed + " has " + result + " sub breeds");
     }
 
     /**
@@ -23,9 +39,16 @@ public class Main {
      * @return the number of sub breeds. Zero should be returned if there are no sub breeds
      * returned by the fetcher
      */
-    public static int getNumberOfSubBreeds(String breed, BreedFetcher breedFetcher) {
-        // TODO Task 3 implement this code so that it is entirely consistent with its provided documentation.
+    public static int getNumberOfSubBreeds(String breed, BreedFetcher breedFetcher)
+            throws BreedFetcher.BreedNotFoundException {
+        if (breedFetcher == null) {
+            throw new IllegalArgumentException("breedFetcher must not be null");
+        }
+        // Let BreedNotFoundException propagate (invalid breed) —
+        // if the fetch succeeds, return the count; if it returns null, treat as 0.
+        List<String> subBreeds = breedFetcher.getSubBreeds(breed);
+        return (subBreeds == null) ? 0 : subBreeds.size();
         // return statement included so that the starter code can compile and run.
-        return -1;
+        // return -1;
     }
 }
